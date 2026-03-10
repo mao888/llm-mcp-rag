@@ -50,6 +50,7 @@ func NewChatOpenAI(ctx context.Context, modeName string, opts ...LLMOption) *Cha
 		apiKey  = os.Getenv("OPENAI_API")
 		baseURL = os.Getenv("OPENAI_API_BASE_URL")
 	)
+
 	if apiKey == "" {
 		panic("OPENAI_API environment variable is not set")
 	}
@@ -57,6 +58,16 @@ func NewChatOpenAI(ctx context.Context, modeName string, opts ...LLMOption) *Cha
 	options := []option.RequestOption{
 		option.WithAPIKey(apiKey),
 	}
+
+	// 设置本地Proxy(clash等)，如果需要的话
+	//proxyURL, _ := url.Parse("http://127.0.0.1:7897")
+	//httpClient := &http.Client{
+	//	Transport: &http.Transport{
+	//		Proxy: http.ProxyURL(proxyURL),
+	//	},
+	//}
+	//options = append(options, option.WithHTTPClient(httpClient))
+
 	if baseURL != "" {
 		options = append(options, option.WithBaseURL(baseURL))
 	}
