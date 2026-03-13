@@ -2,6 +2,7 @@ package MCP
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/mark3labs/mcp-go/client"
@@ -72,10 +73,23 @@ func (m *MCPClient) Close() error {
 }
 
 func (m *MCPClient) CallTool(name string, args any) (string, error) {
+	var arguments map[string]any
+	switch v := args.(type) {
+	case map[string]any:
+		arguments = v
+	case string:
+		err := json.Unmarshal([]byte(v), &arguments)
+		if err != nil {
+			return "", err
+		}
+	default:
+		arguments = make(map[string]any)
+	}
+
 	res, err := m.Client.CallTool(m.Ctx, mcp.CallToolRequest{
 		Params: mcp.CallToolParams{
 			Name:      name,
-			Arguments: args,
+			Arguments: arguments,
 		},
 	})
 	if err != nil {

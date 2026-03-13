@@ -135,6 +135,12 @@ func (c *ChatOpenAI) Chat(prompt string) (result string, toolCall []openai.ToolC
 			}
 		}
 	}
+
+	// 将本次 对话的消息记录下来，供下一轮对话使用
+	if len(acc.Choices) > 0 {
+		c.Messages = append(c.Messages, acc.Choices[0].Message.ToParam())
+	}
+
 	if stream.Err() != nil {
 		panic(stream.Err())
 	}
